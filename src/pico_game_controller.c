@@ -17,7 +17,7 @@
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "tusb.h"
-#include "debounce/debouce_include.h"
+#include "debounce/debounce_include.h"
 #include "usb_descriptors.h"
 
 bool sw_prev_raw_val[SW_GPIO_SIZE];
@@ -27,6 +27,7 @@ uint64_t sw_timestamp[SW_GPIO_SIZE];
 uint64_t reactive_timeout_timestamp;
 
 void (*loop_mode)();
+void (*debounce_mode)();
 bool joy_mode_check = true;
 
 union {
@@ -139,9 +140,6 @@ void init() {
     gpio_init(LED_GPIO[i]);
     gpio_set_dir(LED_GPIO[i], GPIO_OUT);
   }
-
-  // Set listener bools
-  kbm_report = false;
 
   // Joy/KB Mode Switching
   if (!gpio_get(SW_GPIO[0])) {

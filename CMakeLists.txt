@@ -22,6 +22,7 @@ include(pico_sdk_import.cmake)
 project(Pico_Game_Controller C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MAKE_PROGRAM ninja)
 
 # Initialize the SDK
 pico_sdk_init()
