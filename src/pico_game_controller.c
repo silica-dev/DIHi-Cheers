@@ -121,7 +121,10 @@ void update_inputs() {
  **/
 void init() {
   // LED Pin on when connected
-
+  gpio_init(25);
+  gpio_set_function(25, GPIO_FUNC_SIO);
+  gpio_set_dir(25, GPIO_OUT);
+  gpio_put(25, 1);
   reactive_timeout_timestamp = time_us_64();
 
   // Setup Button GPIO

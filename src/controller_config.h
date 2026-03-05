@@ -14,10 +14,10 @@ const uint8_t SW_KEYCODE[] = {HID_KEY_F, HID_KEY_T, HID_KEY_G,
                               HID_KEY_J, HID_KEY_I, HID_KEY_K,
                               HID_KEY_R, HID_KEY_O};
 const uint8_t SW_GPIO[] = {
-    4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 27,
+    4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 27
 };
 const uint8_t LED_GPIO[] = {
-    5, 7, 9, 11, 13, 15, 17, 19, 21, 26, 25
+    5, 7, 9, 11, 13, 15, 17, 19, 21, 26, 28
 };
 #endif
 
