@@ -11,9 +11,15 @@
  * by the end of the function. sw_prev_raw_val contains the state of the GPIO
  * pins on the previous cycle. sw_timestamp is for you to use.
  **/
+;
+
+#include "pico/stdlib.h"
+#include "../controller_config.h"
+#include <stdbool.h>
+
 extern bool sw_prev_raw_val[SW_GPIO_SIZE];
 extern bool sw_cooked_val[SW_GPIO_SIZE];
 extern uint64_t sw_timestamp[SW_GPIO_SIZE];
 
-#include "deferred.c"
-#include "eager.c"
+void debounce_deferred();
+void debounce_eager();
