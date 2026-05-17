@@ -166,17 +166,17 @@ char const *string_desc_arr[] = {
     "Silica",                   // 1: Manufacturer
     "DI-Hi Cheers",             // 2: Product
     "123456",                   // 3: Serials, should use chip ID
-    "Left Pop-Kun",
-    "Left White Button",
-    "Left Yellow Button",
-    "Left Green Button",
-    "Left Blue Button",
-    "Red Button",
-    "Right Blue Button",
-    "Right Green Button",
-    "Right Yellow Button",
-    "Right White Button",
-    "Right Pop-Kun",
+    "Button 1",
+    "Button 2",
+    "Button 3",
+    "Button 4",
+    "Button 5",
+    "Button 6",
+    "Button 7",
+    "Button 8",
+    "Button 9",
+    "Button 10",
+    "Button 11",
 };
 
 static uint16_t _desc_str[64];
