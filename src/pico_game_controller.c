@@ -26,6 +26,10 @@ uint64_t sw_timestamp[SW_GPIO_SIZE];
 
 uint64_t reactive_timeout_timestamp;
 
+uint64_t modeset_timestamp;
+uint64_t modeset_hold_timestamp;
+bool modeset_cooked_val;
+
 void (*loop_mode)();
 void (*debounce_mode)();
 bool joy_mode_check = true;
@@ -144,10 +148,16 @@ void init()
   gpio_init(25);
   gpio_set_function(25, GPIO_FUNC_SIO);
   gpio_set_dir(25, GPIO_OUT);
-  gpio_put(25, 1);
+  gpio_put(25, true);
   reactive_timeout_timestamp = time_us_64();
+  modeset_hold_timestamp = time_us_64();
 
   // Setup Button GPIO
+  gpio_init(MODESET_GPIO);
+  gpio_set_function(MODESET_GPIO, GPIO_FUNC_SIO);
+  gpio_set_dir(MODESET_GPIO, GPIO_IN);
+  gpio_pull_up(MODESET_GPIO);
+
   for (int i = 0; i < SW_GPIO_SIZE; i++)
   {
     sw_prev_raw_val[i] = false;
@@ -167,7 +177,7 @@ void init()
   }
 
   // Joy/KB Mode Switching
-  if (!gpio_get(SW_GPIO[0]))
+  if (!gpio_get(MODESET_GPIO))
   {
     loop_mode = &key_mode;
     joy_mode_check = false;
@@ -180,6 +190,44 @@ void init()
 
   // Debouncing Mode
   debounce_mode = &debounce_eager;
+}
+
+static void swap_output_modes()
+{
+  if (loop_mode == joy_mode)
+  {
+    loop_mode = &key_mode;
+    joy_mode_check = false;
+  }
+  else
+  {
+    loop_mode = &joy_mode;
+    joy_mode_check = true;
+  }
+}
+
+static void handle_mode_swap()
+{
+  // eager debounce
+  bool sw_raw_val = !gpio_get(MODESET_GPIO);
+
+  if (time_us_64() - modeset_timestamp >= SW_DEBOUNCE_TIME_US &&
+      modeset_cooked_val != sw_raw_val)
+  {
+    modeset_cooked_val = sw_raw_val;
+    modeset_timestamp = time_us_64();
+  }
+
+  // handle release
+  if (!modeset_cooked_val)
+  {
+    modeset_hold_timestamp = time_us_64();
+  }
+  if (time_us_64() - modeset_hold_timestamp >= MODESET_HOLD_DELAY)
+  {
+    swap_output_modes();
+    modeset_hold_timestamp = time_us_64();
+  }
 }
 
 /**
@@ -198,6 +246,8 @@ int main(void)
     update_inputs();
     loop_mode();
     update_lights();
+
+    handle_mode_swap();
   }
 
   return 0;
