@@ -165,18 +165,18 @@ char const *string_desc_arr[] = {
     (const char[]){0x09, 0x04}, // 0: is supported language is English (0x0409)
     "Silica",                   // 1: Manufacturer
     "DI-Hi Cheers",             // 2: Product
-    "123456",                   // 3: Serials, should use chip ID
-    "Button 1",
-    "Button 2",
-    "Button 3",
-    "Button 4",
-    "Button 5",
-    "Button 6",
-    "Button 7",
-    "Button 8",
-    "Button 9",
-    "Button 10",
-    "Button 11",
+    "39",                       // 3: Serials, should use chip ID
+    "Left Pop",
+    "Left W",
+    "Left Y",
+    "Left G",
+    "Left B",
+    "Red",
+    "Right B",
+    "Right G",
+    "Right Y",
+    "Right W",
+    "Right Pop",
 };
 
 static uint16_t _desc_str[64];
