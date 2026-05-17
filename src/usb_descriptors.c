@@ -167,15 +167,15 @@ char const *string_desc_arr[] = {
     "DI-Hi Cheers",             // 2: Product
     "39",                       // 3: Serials, should use chip ID
     "Left Pop",
-    "Left W",
-    "Left Y",
-    "Left G",
-    "Left B",
+    "Left White",
+    "Left Yellow",
+    "Left Green",
+    "Left Blue",
     "Red",
-    "Right B",
-    "Right G",
-    "Right Y",
-    "Right W",
+    "Right Blue",
+    "Right Green",
+    "Right Yellow",
+    "Right White",
     "Right Pop",
 };
 
