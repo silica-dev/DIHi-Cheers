@@ -23,6 +23,19 @@ enum
 
 // Joystick Report Descriptor Template - Based off Drewol/rp2040-gamecon
 // Button Map | X | Y
+#ifdef COMBO_CODES
+#define GAMECON_REPORT_DESC_JOYSTICK(...)                                         \
+  HID_USAGE_PAGE(HID_USAGE_PAGE_DESKTOP),                                         \
+      HID_USAGE(HID_USAGE_DESKTOP_JOYSTICK),                                      \
+      HID_COLLECTION(HID_COLLECTION_APPLICATION),                                 \
+      __VA_ARGS__ HID_USAGE_PAGE(HID_USAGE_PAGE_BUTTON), HID_USAGE_MIN(1),        \
+      HID_USAGE_MAX(SW_GPIO_SIZE),                                                \
+      HID_LOGICAL_MIN(0), HID_LOGICAL_MAX(1), HID_REPORT_COUNT(SW_GPIO_SIZE + 2), \
+      HID_REPORT_SIZE(1), HID_INPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),      \
+      HID_REPORT_COUNT(1), HID_REPORT_SIZE(14 - SW_GPIO_SIZE), /*Padding*/        \
+      HID_INPUT(HID_CONSTANT | HID_VARIABLE | HID_ABSOLUTE),                      \
+      HID_COLLECTION_END
+#else
 #define GAMECON_REPORT_DESC_JOYSTICK(...)                                     \
   HID_USAGE_PAGE(HID_USAGE_PAGE_DESKTOP),                                     \
       HID_USAGE(HID_USAGE_DESKTOP_JOYSTICK),                                  \
@@ -34,7 +47,7 @@ enum
       HID_REPORT_COUNT(1), HID_REPORT_SIZE(16 - SW_GPIO_SIZE), /*Padding*/    \
       HID_INPUT(HID_CONSTANT | HID_VARIABLE | HID_ABSOLUTE),                  \
       HID_COLLECTION_END
-
+#endif
 // Light Map
 #define GAMECON_REPORT_DESC_LIGHTS(...)                                        \
   HID_USAGE_PAGE(HID_USAGE_PAGE_DESKTOP), HID_USAGE(0x00),                     \

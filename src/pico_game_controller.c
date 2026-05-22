@@ -26,6 +26,9 @@ uint64_t sw_timestamp[SW_GPIO_SIZE];
 
 uint64_t reactive_timeout_timestamp;
 
+bool modeset_cooked_val;
+uint64_t modeset_timestamp;
+
 void (*loop_mode)();
 void (*debounce_mode)();
 bool joy_mode_check = true;
@@ -136,6 +139,41 @@ void update_inputs()
 }
 
 /**
+ * Checks for button combinations and outputs the retire/retry signal accordingly
+ **/
+#ifdef COMBO_CODES
+void check_control_combos()
+{
+  // eager debounce
+  bool modeset_raw_val = !gpio_get(MODESET_GPIO);
+  if (time_us_64() - modeset_timestamp >= SW_DEBOUNCE_TIME_US &&
+      modeset_cooked_val != modeset_raw_val)
+  {
+    modeset_cooked_val = modeset_raw_val;
+    modeset_timestamp = time_us_64();
+  }
+
+  if (modeset_cooked_val)
+  {
+    bool retire = 1;
+    bool retry = 1;
+    for (int i = 0; i < RETRY_COMBO_SIZE; i++)
+    {
+      retry &= sw_cooked_val[RETRY_COMBO[i]];
+    }
+    retire &= ~retire;
+    for (int i = 0; i < RETIRE_COMBO_SIZE; i++)
+    {
+      retire &= sw_cooked_val[RETIRE_COMBO[i]];
+    }
+
+    report.buttons |= retry << SW_GPIO_SIZE;
+    report.buttons |= retire << (SW_GPIO_SIZE + 1);
+  }
+}
+#endif
+
+/**
  * Initialize Board Pins
  **/
 void init()
@@ -148,6 +186,10 @@ void init()
   reactive_timeout_timestamp = time_us_64();
 
   // Setup Button GPIO
+  gpio_init(MODESET_GPIO);
+  gpio_set_function(MODESET_GPIO, GPIO_FUNC_SIO);
+  gpio_set_dir(MODESET_GPIO, GPIO_IN);
+  gpio_pull_up(MODESET_GPIO);
   for (int i = 0; i < SW_GPIO_SIZE; i++)
   {
     sw_prev_raw_val[i] = false;
@@ -167,7 +209,7 @@ void init()
   }
 
   // Joy/KB Mode Switching
-  if (!gpio_get(SW_GPIO[0]))
+  if (!gpio_get(MODESET_GPIO))
   {
     loop_mode = &key_mode;
     joy_mode_check = false;
@@ -196,6 +238,9 @@ int main(void)
     tud_task(); // tinyusb device task
     debounce_mode();
     update_inputs();
+#ifdef COMBO_CODES
+    check_control_combos();
+#endif
     loop_mode();
     update_lights();
   }
